@@ -43,3 +43,7 @@ venv.bak
 
 # Project specific
 .python-version
+
+# Binaries
+*.exe
+mcp/toolbox.exe

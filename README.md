@@ -9,3 +9,10 @@ ADK is a framework that provides a set of tools and utilities for building AI ag
 
 ## 🏗️ Architecture
 ![System Architecture](./assets/architecture-diagram.jpeg)
+
+
+References:
+- [Mcp Toolbox Databases](https://github.com/googleapis/genai-toolbox)
+This MCP server acts as an “interpreter” between AI agents and databases, translating requests from AI agents into appropriate database queries and executing them.
+- [MCP Toolbox Databases MongoDB](https://www.mongodb.com/company/blog/innovation/simplify-ai-driven-data-connectivity-mcp-toolbox)
+- [Guide to MCP Toolbox Databases](https://www.f2t.jp/en/blog-post/mcp-toolbox)

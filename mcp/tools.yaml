@@ -83,6 +83,10 @@ tools:
     parameters:
       - name: article_ids
         type: array
+        items:
+          name: article_id
+          type: string
+          description: Article ID
         description: List of article IDs
 
   people_at_company:
