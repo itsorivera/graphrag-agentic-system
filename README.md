@@ -19,7 +19,7 @@ This MCP server acts as an “interpreter” between AI agents and databases, tr
 
 Stack:
 - Python
-- ADK
+- ADK Agent Framework
 - MCP Toolbox for Databases
 - Neo4j
 - Uv
