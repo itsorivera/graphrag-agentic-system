@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-class LlmProviderPort(ABC):
+class LLMProviderPort(ABC):
   @abstractmethod
   def get_llm(
     model_id: str
