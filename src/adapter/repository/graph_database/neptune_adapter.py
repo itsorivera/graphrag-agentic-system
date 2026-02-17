@@ -7,7 +7,7 @@ from typing import Any, List, Dict
 import boto3
 from botocore.config import Config as BotoConfig
 
-from src.core.ports.graph_database_port import GraphDatabasePort
+from core.ports.graph_database_port import GraphDatabasePort
 
 
 class NeptuneDatabaseAdapter(GraphDatabasePort):
