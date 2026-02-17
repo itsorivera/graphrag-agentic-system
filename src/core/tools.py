@@ -1,5 +1,5 @@
 from typing import Any
-from src.config.database import db_instance
+from config.dependencies import db_instance
 
 def get_schema() -> list[dict[str,Any]]:
   """Get the schema of the database, returns node-types(labels) with their types and attributes and relationships between node-labels
