@@ -65,3 +65,5 @@ def get_investors(company: str) -> list[dict[str, Any]]:
     except Exception as e:
         return [{"error":str(e)}]
  
+GRAPH_DATABASE_AGENT_TOOLS = [get_schema, execute_read_query]
+INVESTOR_RESEARCH_AGENT_TOOLS = [get_schema, get_investors]
