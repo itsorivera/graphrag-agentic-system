@@ -1,4 +1,4 @@
-from core.ports.llm_provider_port import LLMProviderPort
+from src.core.ports.llm_provider_port import LLMProviderPort
 from typing import Optional
 from langchain_aws import ChatBedrockConverse
 import traceback

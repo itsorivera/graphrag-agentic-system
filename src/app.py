@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from adapter.rest import router as investments_router
+from src.adapter.rest import router as investments_router
 
 def create_app() -> FastAPI:
     app = FastAPI()
@@ -13,9 +13,11 @@ def create_app() -> FastAPI:
     @app.get("/health/liveness")
     async def liveness_check():
         return {"status": "alive"}
+
     @app.get("/health/readiness")
     async def readiness_check():
         return {"status": "ready"}
+
     return app
 
 app = create_app()

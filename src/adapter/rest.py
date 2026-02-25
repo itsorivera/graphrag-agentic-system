@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from config.dependencies import get_agent_investment_root
+from src.config.dependencies import get_agent_investment_root
 import traceback
 
 router = APIRouter(prefix="/api/v1/investments",
