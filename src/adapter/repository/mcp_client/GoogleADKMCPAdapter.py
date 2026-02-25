@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
 import logging
 
-from core.ports.mcp_client_port import MCPClientPort
+from src.core.ports.mcp_client_port import MCPClientPort
 
 
 class GoogleADKMCPAdapter(MCPClientPort):

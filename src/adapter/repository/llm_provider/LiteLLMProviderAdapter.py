@@ -4,7 +4,7 @@ from typing import Optional
 from google.adk.models.lite_llm import LiteLlm
 import logging
 
-from core.ports.llm_provider_port import LLMProviderPort
+from src.core.ports.llm_provider_port import LLMProviderPort
 
 
 class LiteLLMProviderAdapter(LLMProviderPort):    
