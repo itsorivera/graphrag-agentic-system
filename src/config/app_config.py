@@ -1,8 +1,9 @@
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from pydantic_settings import BaseSettings
 
 
 class AppConfig(BaseSettings):
+    
     APP_NAME: str = Field(default="GraphRAG Agentic System")
     API_BASE_URL: str = Field(default="http://localhost:8000")
     API_BASE_PATH: str = Field(default="/api")
@@ -17,6 +18,7 @@ class AppConfig(BaseSettings):
     MCP_TOOLBOX_URL: str = Field(default="http://localhost:8000")
     MCP_TOOLBOX_NAME: str = Field(default="Toolbox")
     
+    # Neo4j Configuration (supports both naming conventions)
     NEO4J_DATABASE_URL: str = Field(default="")
     NEO4J_DATABASE_USER: str = Field(default="")
     NEO4J_DATABASE_PASSWORD: str = Field(default="")

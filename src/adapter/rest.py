@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
+from typing import Annotated
 from src.config.dependencies import get_agent_investment_root
+from src.core.ports.agent_port import AgentPort
 import traceback
 
 router = APIRouter(prefix="/api/v1/investments",
@@ -10,7 +12,7 @@ router = APIRouter(prefix="/api/v1/investments",
         description="Endpoint to query the investment research agent with a natural language question about investors, companies, industries or news.")
 async def query_investment_agent(
     question: str,
-    agent=Depends(get_agent_investment_root)
+    agent: Annotated[AgentPort, Depends(get_agent_investment_root)]
     ):
     try:
         response = await agent.run(question)

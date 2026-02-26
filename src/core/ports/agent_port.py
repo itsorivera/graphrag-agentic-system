@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
-from core.models.agent_response import AgentResponse
+from src.core.models.agent_response import AgentResponse
 
 
 class AgentPort(ABC):

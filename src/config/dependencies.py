@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import Optional, Annotated
 from dotenv import load_dotenv
 import traceback
+from fastapi import Depends
 from src.core.agent_metadata import (
     GRAPH_DATABASE_AGENT_DESC,
     INVESTOR_RESEARCH_AGENT_DESC,
@@ -48,8 +49,9 @@ class DependencyContainer:
 def get_dependencies_container() -> DependencyContainer:
     return DependencyContainer()
 
+
 async def get_agent_investment_root(
-        dependencies: DependencyContainer = get_dependencies_container()
+        dependencies: Annotated[DependencyContainer, Depends(get_dependencies_container)]
 ) -> AgentPort:
     
     try:
