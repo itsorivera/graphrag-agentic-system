@@ -1,5 +1,7 @@
 from typing import Any
-from config.dependencies import db_instance
+from src.adapter.repository.graph_database.neo4j_adapter import Neo4jDatabaseAdapter
+
+db_instance = Neo4jDatabaseAdapter()
 
 def get_schema() -> list[dict[str,Any]]:
   """Get the schema of the database, returns node-types(labels) with their types and attributes and relationships between node-labels
