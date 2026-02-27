@@ -15,7 +15,7 @@ async def query_investment_agent(
     agent: Annotated[AgentPort, Depends(get_agent_investment_root)]
     ):
     try:
-        response = await agent.run(question)
+        response = await agent.process_message(question, "abc-01")
         return {"response": response}
     except Exception as e:
         traceback.print_exc()

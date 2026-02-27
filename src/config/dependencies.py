@@ -2,6 +2,7 @@ from typing import Optional, Annotated
 from dotenv import load_dotenv
 import traceback
 from fastapi import Depends
+import logging
 from src.core.agent_metadata import (
     GRAPH_DATABASE_AGENT_DESC,
     INVESTOR_RESEARCH_AGENT_DESC,
@@ -24,6 +25,7 @@ from functools import lru_cache
 import os
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 class DependencyContainer:
     def __init__(self):
@@ -41,7 +43,7 @@ class DependencyContainer:
         if self._adk_mcp_client is None:
             mcp_url = os.getenv("MCP_TOOLBOX_URL")
             mcp_name = os.getenv("MCP_TOOLBOX_NAME", "MCP_TOOLBOX")
-            self._adk_mcp_client = GoogleADKMCPAdapter(server_url=mcp_url, name=mcp_name)
+            self._adk_mcp_client = GoogleADKMCPAdapter(server_url=mcp_url, server_name=mcp_name)
         return self._adk_mcp_client
     
 
@@ -56,12 +58,14 @@ async def get_agent_investment_root(
     
     try:
         mcp_tools = await dependencies.adk_mcp_client.get_tools()
+        logger.info(f"Tools loaded from MCP: {[getattr(tool, 'name', getattr(tool, '__name__', str(tool))) for tool in mcp_tools]}")
     except Exception as e:
         traceback.print_exc()
-        print(f"Error loading tools from MCP: {str(e)}")
+        logger.error(f"Error loading tools from MCP: {str(e)}")
+        mcp_tools = []
     
     all_research_tools = mcp_tools + [get_schema]
-    
+    logger.info(f"Total tools available for agents: {[getattr(tool, 'name', getattr(tool, '__name__', str(tool))) for tool in all_research_tools]}")
     GROQ_MODEL = "groq/llama-3.3-70b-versatile"
 
     sub_agents_config = [
