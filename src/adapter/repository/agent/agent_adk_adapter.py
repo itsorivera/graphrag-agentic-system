@@ -120,9 +120,9 @@ class ADKAgentAdapter(HierarchicalAgentPort):
             self.logger.error(f"Error creando agente ADK: {e}")
             raise RuntimeError(f"Error inicializando agente ADK: {e}") from e
     
-    def _get_or_create_session(self, thread_id: str) -> Session:
+    async def _get_or_create_session(self, thread_id: str) -> Session:
         if thread_id not in self.sessions:
-            session = self.session_service.create_session(
+            session = await self.session_service.create_session(
                 app_name=self.app_name,
                 user_id=self.user_id,
                 session_id=thread_id
@@ -143,7 +143,7 @@ class ADKAgentAdapter(HierarchicalAgentPort):
         
         try:
             # Obtener o crear sesión
-            session = self._get_or_create_session(thread_id)
+            session = await self._get_or_create_session(thread_id)
             
             # Crear contenido del mensaje
             content = types.Content(
@@ -212,3 +212,78 @@ class ADKAgentAdapter(HierarchicalAgentPort):
         self.session_service = None
         
         self.logger.info(f"Limpieza del agente ADK {self.agent_name} completada")
+    
+    def add_sub_agent(self, agent: "AgentPort") -> None:
+        """
+        Agrega un sub-agente a la jerarquía.
+        
+        Args:
+            agent: Agente a agregar como sub-agente
+        """
+        agent_name = agent.get_agent_name()
+        self.logger.info(f"Agregando sub-agente: {agent_name}")
+        
+        # Crear configuración si no existe
+        if not any(config.name == agent_name for config in self.sub_agent_configs):
+            config = ADKSubAgentConfig(
+                name=agent_name,
+                description=f"Sub-agente: {agent_name}",
+                instruction="Procesa solicitudes según tus capacidades",
+                tools=getattr(agent, 'tools', []),
+                model=getattr(agent, 'model', self.model)
+            )
+            self.sub_agent_configs.append(config)
+            self.logger.info(f"Configuración agregada para sub-agente: {agent_name}")
+    
+    def remove_sub_agent(self, agent_name: str) -> bool:
+        """
+        Remueve un sub-agente de la jerarquía.
+        
+        Args:
+            agent_name: Nombre del agente a remover
+            
+        Returns:
+            True si se removió, False si no existía
+        """
+        initial_length = len(self.sub_agent_configs)
+        self.sub_agent_configs = [
+            config for config in self.sub_agent_configs 
+            if config.name != agent_name
+        ]
+        
+        if len(self.sub_agent_configs) < initial_length:
+            self.logger.info(f"Sub-agente removido: {agent_name}")
+            return True
+        
+        self.logger.warning(f"Sub-agente no encontrado: {agent_name}")
+        return False
+    
+    def get_sub_agents(self) -> List["AgentPort"]:
+        """
+        Obtiene la lista de sub-agentes.
+        
+        Returns:
+            Lista de sub-agentes registrados
+        """
+        # Retorna las configuraciones de sub-agentes
+        # En una implementación real, podrían ser instancias de AgentPort
+        self.logger.debug(f"Obteniendo {len(self.sub_agent_configs)} sub-agentes")
+        return self.sub_agent_configs
+    
+    def get_sub_agent(self, agent_name: str) -> Optional["AgentPort"]:
+        """
+        Obtiene un sub-agente por nombre.
+        
+        Args:
+            agent_name: Nombre del sub-agente
+            
+        Returns:
+            La configuración del sub-agente si existe, None si no
+        """
+        for config in self.sub_agent_configs:
+            if config.name == agent_name:
+                self.logger.debug(f"Sub-agente encontrado: {agent_name}")
+                return config
+        
+        self.logger.warning(f"Sub-agente no encontrado: {agent_name}")
+        return None

@@ -51,7 +51,7 @@ class GoogleADKMCPAdapter(MCPClientPort):
         
         try:
             # Import dinámico para evitar dependencia obligatoria
-            from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseConnectionParams
+            from google.adk.tools.mcp_tool.mcp_toolset import McpToolset, SseConnectionParams
         except ImportError as e:
             self.logger.error(
                 "google-adk no está instalado. "
@@ -67,17 +67,12 @@ class GoogleADKMCPAdapter(MCPClientPort):
                 f"Inicializando Google ADK MCP client para servidor: "
                 f"{self.server_name} con URL: {self.server_url}"
             )
-            
-            # Crear conexión SSE
+            # sse connection params
             connection_params = SseConnectionParams(url=self.server_url)
-            self._toolset = MCPToolset(connection_params=connection_params)
-            
-            # Entrar al context manager manualmente para mantener conexión activa
-            await self._toolset.__aenter__()
+            self._toolset = McpToolset(connection_params=connection_params)
             self._is_connected = True
             
-            # Cargar herramientas
-            self._tools = await self._toolset.load_tools()
+            self._tools = await self._toolset.get_tools()
             self.logger.info(
                 f"Cargadas {len(self._tools)} herramientas desde "
                 f"servidor MCP: {self.server_name}"
@@ -198,7 +193,6 @@ class GoogleADKMCPAdapter(MCPClientPort):
                 self.logger.info(
                     f"Cerrando conexión con servidor MCP: {self.server_name}"
                 )
-                await self._toolset.__aexit__(None, None, None)
                 self._is_connected = False
                 self._toolset = None
                 self._tools = None
