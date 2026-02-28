@@ -18,9 +18,11 @@ from src.core.ports.llm_provider_port import LLMProviderPort
 from src.core.ports.mcp_client_port import MCPClientPort
 from src.core.ports.agent_port import AgentPort
 from src.adapter.repository.llm_provider.LiteLLMProviderAdapter import LiteLLMProviderAdapter
+from src.adapter.repository.llm_provider.AWSBedrockLLMProviderAdapter import AWSLlmProviderAdapter
 from src.adapter.repository.mcp_client.GoogleADKMCPAdapter import GoogleADKMCPAdapter
 from src.adapter.repository.agent.agent_adk_adapter import ADKAgentAdapter, ADKSubAgentConfig
-from src.core.tools import GRAPH_DATABASE_AGENT_TOOLS, INVESTOR_RESEARCH_AGENT_TOOLS, get_schema
+from src.adapter.repository.agent.langgraph_agent_adapter import LanggraphAgentAdapter
+from src.core.local_tools import GRAPH_DATABASE_AGENT_LOCAL_TOOLS, INVESTOR_RESEARCH_AGENT_LOCAL_TOOLS, get_schema
 from functools import lru_cache
 import os
 
@@ -33,9 +35,15 @@ class DependencyContainer:
         self._adk_mcp_client: Optional[MCPClientPort] = None
     
     @property
-    def investment_agent_llm(self) -> LLMProviderPort:
+    def lite_llm_provider_adapter(self) -> LLMProviderPort:
         if self._llm_adapter is None:
             self._llm_adapter = LiteLLMProviderAdapter()
+        return self._llm_adapter
+    
+    @property
+    def aws_llm_provider_adapter(self) -> LLMProviderPort:
+        if self._llm_adapter is None:
+            self._llm_adapter = AWSLlmProviderAdapter()
         return self._llm_adapter
     
     @property
@@ -74,14 +82,14 @@ async def get_agent_investment_root(
             model=GROQ_MODEL,
             description=GRAPH_DATABASE_AGENT_DESC,
             instruction=GRAPH_DATABASE_AGENT_PROMPT,
-            tools=GRAPH_DATABASE_AGENT_TOOLS,
+            tools=GRAPH_DATABASE_AGENT_LOCAL_TOOLS,
         ),
         ADKSubAgentConfig(
             name="investor_research_agent",
             model=GROQ_MODEL,
             description=INVESTOR_RESEARCH_AGENT_DESC,
             instruction=INVESTOR_RESEARCH_AGENT_PROMPT,
-            tools=INVESTOR_RESEARCH_AGENT_TOOLS
+            tools=INVESTOR_RESEARCH_AGENT_LOCAL_TOOLS
         ),
         ADKSubAgentConfig(
             name="investment_research_agent",
@@ -94,10 +102,22 @@ async def get_agent_investment_root(
     
     agent_adapter = ADKAgentAdapter(
         agent_name="investment_root_agent",
-        llm_port=dependencies.investment_agent_llm,
+        llm_port=dependencies.lite_llm_provider_adapter,
         model=GROQ_MODEL,
         instruction=ROOT_AGENT_PROMPT,
         sub_agent_configs=sub_agents_config,
+    )
+    
+    await agent_adapter.create_agent()
+    
+    return agent_adapter
+
+async def get_agent_langgraph(
+        dependencies: Annotated[DependencyContainer, Depends(get_dependencies_container)]
+) -> AgentPort:
+    agent_adapter = LanggraphAgentAdapter(
+        agent_name="langgraph_agent",
+        llm_port=dependencies.aws_llm_provider_adapter,
     )
     
     await agent_adapter.create_agent()
