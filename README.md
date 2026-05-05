@@ -23,3 +23,6 @@ Stack:
 - MCP Toolbox for Databases
 - Neo4j
 - Uv
+
+
+Estás aplicando patrones de Arquitectura Hexagonal (Ports & Adapters) y Dependency Injection de manera profesional, lo cual es excelente para la mantenibilidad y escalabilidad de un sistema multi-agente.
