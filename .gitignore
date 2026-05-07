@@ -47,3 +47,11 @@ venv.bak
 # Binaries
 *.exe
 mcp/toolbox.exe
+
+# Weaviate / Vector DB local state (Week 3)
+rag-lectures/w3-information-retrieval-with-vector-dbs/code/data/*.db
+rag-lectures/w3-information-retrieval-with-vector-dbs/code/data/migration*
+rag-lectures/w3-information-retrieval-with-vector-dbs/code/data/raft/
+
+# Large Datasets and Serialized Objects
+*.joblib
